@@ -16,8 +16,6 @@
 
     <title>Step-tool</title>
 
-    <!-- Fonts -->
-
 </head>
 
 <body class="antialiased">
