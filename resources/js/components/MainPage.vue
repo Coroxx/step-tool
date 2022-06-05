@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!logged" class="absolute bottom-0 left-0 right-0 z-40 w-full">
+  <div v-if="!logged" class="absolute bottom-0 left-0 right-0 z-0 w-screen">
     <div class="wave"></div>
     <div class="wave"></div>
   </div>

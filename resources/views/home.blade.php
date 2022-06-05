@@ -18,11 +18,20 @@
 
 </head>
 
+
 <body class="antialiased">
+    @guest
+        <style>
+            html,
+            body {
+                overflow: hidden;
+            }
+
+        </style>
+    @endguest
     <style>
         * {
             font-family: 'Source Code Pro', monospace;
-
         }
 
         input:-webkit-autofill,
@@ -44,7 +53,8 @@
 
     </style>
     <div id="app">
-        <router-view></router-view>
+        <router-view>
+        </router-view>
     </div>
 
     <script>
