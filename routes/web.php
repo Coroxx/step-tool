@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\RunController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('home');
 });
+
+Route::post('/logout', [LoginController::class, 'logout']);
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/new/run', [RunController::class, 'store']);
+
+
+Route::get('/runs', [RunController::class, 'index']);

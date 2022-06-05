@@ -35,10 +35,26 @@ require('./bootstrap');
 import { createApp } from "vue";
 import router from "./router";
 import MainPage from "./components/MainPage.vue";
+import VueToast from 'vue-toast-notification';
+import VueChartkick from 'vue-chartkick'
+import 'chartkick/chart.js'
 
 
-createApp({
+
+// Import one of the available themes
+import 'vue-toast-notification/dist/theme-default.css';
+
+
+const app = createApp({
     components : {
         MainPage
     }
-}).use(router).mount('#app')
+});
+
+app.use(router);
+app.use(VueChartkick)
+
+app.use(VueToast)
+
+app.mount('#app')
+

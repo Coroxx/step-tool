@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute bottom-0 left-0 right-0 z-40 w-full">
+  <div v-if="!logged" class="absolute bottom-0 left-0 right-0 z-40 w-full">
     <div class="wave"></div>
     <div class="wave"></div>
   </div>
@@ -23,7 +23,20 @@
           alt="nftIcon"
         />
       </div>
-      <h4 class="-mt-1 text-center">Version : 0.1</h4>
+      <h4 class="-mt-1 text-center">
+        Version : 1.0 -
+        <a href="https://github.com/Coroxx/step-tool" target="_blank">
+          Github</a
+        >
+      </h4>
+      <div v-if="logged" class="mt-2 text-center">
+        <button
+          v-on:click="logout"
+          class="p-1 m-auto text-base bg-red-500 rounded"
+        >
+          Se déconnecter
+        </button>
+      </div>
     </div>
 
     <div
@@ -53,8 +66,8 @@
             </div>
           </div>
         </div>
-        <div class="m-auto mt-12 md:mt-0 font-default">
-          <h4 class="text-xl font-bold">Prix du GST sur la BNC</h4>
+        <div class="m-auto mt-12 lg:mt-0 font-default">
+          <h4 class="text-xl font-bold">Prix du GST sur SOL</h4>
           <div class="flex justify-center mt-1">
             <p>{{ gstSOLPrice }}$</p>
             <img
@@ -78,22 +91,32 @@
         </div>
       </div>
     </div>
+    <div v-if="logged" class="text-center font-default"></div>
     <div
+      v-if="!logged"
       class="mt-12 text-xl animate__animated animate__fadeIn animate__delay-2s"
     >
-      <button
-        v-if="!modal"
-        @click="alert('dd')"
-        class="px-4 py-2 m-auto rounded  bg-neutral-700 animate__animated animate__fadeIn"
+      <div class="text-center font-default">
+        <button
+          v-if="!modal"
+          v-on:click="modal = !modal"
+          class="px-4 py-2 rounded  bg-neutral-700 animate__animated animate__fadeIn"
+        >
+          Se connecter
+        </button>
+      </div>
+      <div
+        v-if="modal"
+        id="modal"
+        class="m-auto text-center animate__animated animate__slideInLeft"
       >
-        Se sd
-      </button>
-      <div v-if="modal" class="animate__animated animate__slideInLeft">
-        <div class="flex justify-center gap-4">
+        <div
+          class="w-2/3 p-2 m-auto text-center rounded  z-80 lg:w-1/2 font-default"
+        >
           <div
-            class="inline-block p-2 rounded cursor-pointer h-9 bg-neutral-700"
+            class="inline-block p-2 mb-2 rounded cursor-pointer  h-9 bg-neutral-700"
           >
-            <button v-on:click="alert('')">
+            <button v-on:click="modal = !modal">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="w-5 h-5"
@@ -108,14 +131,82 @@
               </svg>
             </button>
           </div>
-          <div class="inline-block p-2 rounded font-default bg-neutral-700">
-            <h1>Connexion</h1>
+          <h1>Connexion</h1>
+          <div class="mt-2 text-lg">
+            <div class="p-2">
+              <input
+                v-model="data.name"
+                type="text"
+                class="px-2 py-1 rounded focus:outline-none bg-neutral-700"
+                placeholder="Nom d'utilisateur"
+                name="user"
+              />
+            </div>
+            <div class="p-2">
+              <input
+                v-model="data.password"
+                type="password"
+                class="px-2 py-1 rounded focus:outline-none bg-neutral-700"
+                placeholder="Mot de passe"
+                name="password"
+              />
+            </div>
           </div>
+          <button class="p-2 mt-1 text-base font-bold" v-on:click="login">
+            Se connecter
+          </button>
         </div>
       </div>
     </div>
+    <div
+      v-if="logged"
+      class="w-11/12 m-auto mt-12  md:w-10/12 animate__animated animate__fadeIn animate__delay-1s"
+    >
+      <div class="mb-1 md:text-center">
+        Nombre de GST gagnés
+        <span class="text-green-500"
+          >{{ gstAmount }} ≈
+          {{ Number((gstAmount * gstSOLPrice).toFixed(2)) }}$</span
+        >
+      </div>
+      <line-chart :data="runs" style="z-index: 9999"></line-chart>
+      <div class="pt-2">
+        <div class="font-bold lg:inline">
+          ROI atteint dans :
+          <span
+            v-bind:class="
+              Number(((700 - gstAmount * gstSOLPrice) / 8.3).toFixed(0)) > 45
+                ? 'text-red-500'
+                : 'text-green-500'
+            "
+          >
+            {{ Number(((700 - gstAmount * gstSOLPrice) / 8.3).toFixed(0)) }}
+            jours
+          </span>
+        </div>
+        <div class="mt-3 lg:inline lg:mt-0 lg:float-right">
+          <div class="flex">
+            <div>
+              <input
+                type="text"
+                v-model="form.earnedAmount"
+                id="earnedAmount"
+                class="p-1 rounded focus:outline-none bg-neutral-700"
+                placeholder="Montant gagné aujourd'hui"
+                style="width: 250px"
+              />
+            </div>
+            <div class="ml-2" style="margin-top: 2.3px">
+              <button v-on:click="addRun">Valider</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="py-8"></div>
+    </div>
   </div>
 </template>
+
 
 
 <script>
@@ -123,19 +214,87 @@ export default {
   name: "MainPage",
   data() {
     return {
+      data: {
+        name: "",
+        password: "",
+      },
       modal: false,
       gstBNCPrice: null,
       gstSOLPrice: null,
       bncResult: "00.00",
       solResult: "00.00",
+      logged: window.Laravel.logged,
+      runs: [],
+      gstAmount: null,
+      form: {
+        earnedAmount: "",
+      },
     };
   },
   methods: {
+    successNotification(message, delay) {
+      this.$toast.open({
+        message: message,
+        type: "success",
+        duration: delay,
+        dismissible: true,
+      });
+    },
+    errorNotification(message, delay) {
+      this.$toast.open({
+        message: message,
+        type: "error",
+        duration: delay,
+        dismissible: true,
+      });
+    },
     gstBnc: function () {
       this.bncResult = this.bncInput * this.gstBNCPrice;
     },
     gstSol: function () {
       this.solResult = this.solInput * this.gstSOLPrice;
+    },
+    addRun: function () {
+      axios
+        .post("/new/run", this.form)
+        .then((response) => {
+          this.successNotification("Valeur ajoutée avec succès !", 4000);
+          this.gstAmount += parseInt(this.form.earnedAmount);
+          this.getRuns();
+        })
+        .catch((error) => {
+          if (error.toJSON().status == 403) {
+            this.errorNotification("Valeur déjà renseignée aujourd'hui", 5000);
+          } else {
+            this.errorNotification("Une erreur est survenue", 5000);
+          }
+        });
+    },
+    getRuns: function () {
+      axios.get("/runs").then((response) => {
+        this.gstAmount = response.data[0];
+        this.runs = response.data[1].map((run) => [
+          run.created_at.split("T")[0],
+          run.amount,
+        ]);
+      });
+    },
+    login: function () {
+      axios
+        .post("/login", this.data)
+        .then((response) => {
+          this.successNotification("Connexion réussie ! Redirection...", 2500);
+          reload();
+        })
+        .catch((error) => {
+          this.errorNotification("Identifiants incorrects", 2500);
+        });
+    },
+    logout: function () {
+      axios.post("/logout").then((response) => {
+        this.successNotification("Deconnexion réussie ! Redirection...", 2500);
+        reload();
+      });
     },
   },
   mounted() {
@@ -155,6 +314,7 @@ export default {
             response.data.market_data.current_price.usd.toFixed(3)
           ))
       );
+    this.getRuns();
   },
 };
 </script>
