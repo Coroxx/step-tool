@@ -38,17 +38,22 @@ class RunController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'earnedAmount' => ['required', 'regex:/[+-]?([0-9]*[.])?[0-9]+/']
-        ]);
+        try {
 
-        if (Run::whereDate('created_at', Carbon::today())->exists()) return abort(403);
+            $request->validate([
+                'earnedAmount' => ['required', 'regex:/[+-]?([0-9]*[.])?[0-9]+/']
+            ]);
 
-        Run::create([
-            'amount' => $request->earnedAmount
-        ]);
+            if (Run::whereDate('created_at', Carbon::today())->exists()) return abort(403);
 
-        return response('Added', 200);
+            Run::create([
+                'amount' => $request->earnedAmount
+            ]);
+
+            return response('Added', 200);
+        } catch (Exception $e) {
+            return $e;
+        }
     }
 
     /**
