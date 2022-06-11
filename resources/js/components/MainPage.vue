@@ -175,12 +175,12 @@
           ROI atteint dans :
           <span
             v-bind:class="
-              Number(((700 - gstAmount * gstSOLPrice) / 8.3).toFixed(0)) > 45
+              Number(((700 / gstSOLPrice - gstAmount) / 8.3).toFixed(0)) > 45
                 ? 'text-red-500'
                 : 'text-green-500'
             "
           >
-            {{ Number(((700 - gstAmount * gstSOLPrice) / 8.3).toFixed(0)) }}
+            {{ Number(((700 / gstSOLPrice - gstAmount) / 8.3).toFixed(0)) }}
             jours
           </span>
         </div>
@@ -266,6 +266,7 @@ export default {
           if (error.toJSON().status == 403) {
             this.errorNotification("Valeur déjà renseignée aujourd'hui", 5000);
           } else {
+            console.log(error);
             this.errorNotification("Une erreur est survenue", 5000);
           }
         });

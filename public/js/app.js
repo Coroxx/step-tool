@@ -23095,6 +23095,8 @@ __webpack_require__.r(__webpack_exports__);
         if (error.toJSON().status == 403) {
           _this.errorNotification("Valeur déjà renseignée aujourd'hui", 5000);
         } else {
+          console.log(error);
+
           _this.errorNotification("Une erreur est survenue", 5000);
         }
       });
@@ -23452,8 +23454,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 8
   /* PROPS */
   , ["data"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_40, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_41, [_hoisted_42, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
-    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(Number(((700 - $data.gstAmount * $data.gstSOLPrice) / 8.3).toFixed(0)) > 45 ? 'text-red-500' : 'text-green-500')
-  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(Number(((700 - $data.gstAmount * $data.gstSOLPrice) / 8.3).toFixed(0))) + " jours ", 3
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(Number(((700 / $data.gstSOLPrice - $data.gstAmount) / 8.3).toFixed(0)) > 45 ? 'text-red-500' : 'text-green-500')
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(Number(((700 / $data.gstSOLPrice - $data.gstAmount) / 8.3).toFixed(0))) + " jours ", 3
   /* TEXT, CLASS */
   )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_43, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_44, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "text",

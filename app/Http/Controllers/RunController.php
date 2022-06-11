@@ -39,7 +39,6 @@ class RunController extends Controller
     public function store(Request $request)
     {
         try {
-
             $request->validate([
                 'earnedAmount' => ['required', 'regex:/[+-]?([0-9]*[.])?[0-9]+/']
             ]);
@@ -51,8 +50,8 @@ class RunController extends Controller
             ]);
 
             return response('Added', 200);
-        } catch (Exception $e) {
-            return $e;
+        } catch (\Throwable $e) {
+            return response()->json($e->getMessage());
         }
     }
 
